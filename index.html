@@ -143,7 +143,23 @@
     mapboxgl.accessToken = 'pk.eyJ1IjoiYWxzY2hlbCIsImEiOiI0MGQxMGFmY2ViZTBhMjk5NDA1YTg2NzIxZjQyZWE2ZSJ9.LiQjz2oMBtEEPbhjGV-ogw';
 
     // read the data
-    $(document).ready(function () {
+    var museums = (function () {
+      var museums = null;
+        $.ajax({
+            'async': false,
+            'global': false,
+            'url': 'data/moscow_museums.geojson',
+            'dataType': "json",
+            'success': function (data) {
+                museums = data;
+            }
+        });
+        return museums;
+    })();
+
+
+
+    /*$(document).ready(function () {
       $.getJSON('testpoint.geojson', function (data) {
         var museums = [];
         $.each(data.features, function (key, val) {
@@ -154,7 +170,7 @@
             html:items.join('')
         }).appendTo('body');
       });
-    });
+    });*/
 
     // Initialize the map
     var map = new mapboxgl.Map({
