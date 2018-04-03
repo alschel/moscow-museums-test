@@ -8,7 +8,6 @@
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css' rel='stylesheet' />
     <!-- jquery -->
     <script   src="https://code.jquery.com/jquery-3.3.1.js"   integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="   crossorigin="anonymous"></script>
-    <script type="text/javascript" src="data/moscow_museums.geojson"></script>
     <style>
     body {
       background: #404040;
@@ -144,7 +143,16 @@
     mapboxgl.accessToken = 'pk.eyJ1IjoiYWxzY2hlbCIsImEiOiI0MGQxMGFmY2ViZTBhMjk5NDA1YTg2NzIxZjQyZWE2ZSJ9.LiQjz2oMBtEEPbhjGV-ogw';
 
     // read the data
-    var museums = JSON.parse(moscow_museums);
+    var museums = $.getJSON('testpoint.geojson', function (data) {
+      var items = [];
+      $.each(data.features, function (key, val) {
+          items.push('<li id="' + key + '">' + val + '</li>');
+      });
+      $('<ul/>', {
+          'class':'my-new-list',
+          html:items.join('')
+      }).appendTo('body');
+    });
 
     // Initialize the map
     var map = new mapboxgl.Map({
@@ -238,7 +246,7 @@
     // Insert the layer beneath the first symbol layer.
        }, firstSymbolId);
 
-       buildLocationList('data/moscow_museums.geojson');
+       buildLocationList(museums);
 
      });
 
