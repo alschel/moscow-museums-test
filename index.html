@@ -44,9 +44,9 @@
       bottom: 0;
     }
 
-    /*.pad2 {
+    pad2 {
       padding: 20px;
-    }*/
+    }
 
     h1 {
       font-size: 22px;
@@ -132,7 +132,7 @@
         </style>
   </head>
   <body>
-    <div id='map' class='map pad2'></div>
+    <div id='map' class='map'></div>
     <div class='sidebar'>
       <div class='heading'>
         <h1>Our locations</h1>
@@ -142,10 +142,11 @@
     <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoiYWxzY2hlbCIsImEiOiI0MGQxMGFmY2ViZTBhMjk5NDA1YTg2NzIxZjQyZWE2ZSJ9.LiQjz2oMBtEEPbhjGV-ogw';
 
-    // read the data
+    // Read the data from our geojson
     var museums = (function () {
       var museums;
         $.ajax({
+          // Чтобы данные успели подгрузиться до, делаем запрос асинхронным
             'async': false,
             'global': false,
             'url': 'data/moscow_museums.geojson',
@@ -156,21 +157,6 @@
         });
         return museums;
     })();
-
-
-
-    /*$(document).ready(function () {
-      $.getJSON('testpoint.geojson', function (data) {
-        var museums = [];
-        $.each(data.features, function (key, val) {
-            items.push('<li id="' + key + '">' + val + '</li>');
-        });
-        $('<ul/>', {
-            'class':'my-new-list',
-            html:items.join('')
-        }).appendTo('body');
-      });
-    });*/
 
     // Initialize the map
     var map = new mapboxgl.Map({
@@ -210,9 +196,8 @@
         // Create a new div with the class 'details' for each store
         // and fill it with the city and phone number
         var details = listing.appendChild(document.createElement('div'));
-        details.innerHTML = prop.city;
         if (prop.opening_ho) {
-          details.innerHTML += ' &middot; ' + prop.opening_ho;
+          details.innerHTML += prop.opening_ho;
         }
       }
     }
