@@ -143,15 +143,17 @@
     mapboxgl.accessToken = 'pk.eyJ1IjoiYWxzY2hlbCIsImEiOiI0MGQxMGFmY2ViZTBhMjk5NDA1YTg2NzIxZjQyZWE2ZSJ9.LiQjz2oMBtEEPbhjGV-ogw';
 
     // read the data
-    var museums = $.getJSON('testpoint.geojson', function (data) {
-      var items = [];
-      $.each(data.features, function (key, val) {
-          items.push('<li id="' + key + '">' + val + '</li>');
+    $(document).ready(function () {
+      $.getJSON('testpoint.geojson', function (data) {
+        var museums = [];
+        $.each(data.features, function (key, val) {
+            items.push('<li id="' + key + '">' + val + '</li>');
+        });
+        $('<ul/>', {
+            'class':'my-new-list',
+            html:items.join('')
+        }).appendTo('body');
       });
-      $('<ul/>', {
-          'class':'my-new-list',
-          html:items.join('')
-      }).appendTo('body');
     });
 
     // Initialize the map
