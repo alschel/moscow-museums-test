@@ -85,7 +85,18 @@
         'layout': {},
         'paint': {
            'circle-color': '#D49A66',
-           'circle-radius': 5,
+           'circle-radius':
+           {
+               property: 'n_users',
+               type: 'exponential',
+               stops: [
+                 [1, 2],
+                 [101, 20]
+               ]
+             },
+
+             'circle-opacity': 0.8
+           },
            'circle-opacity': 0.8
          }
     // AddLayer method takes 2 arguments: the layer as an object, and a string
