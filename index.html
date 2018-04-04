@@ -296,8 +296,8 @@
 
       var popup = new mapboxgl.Popup({ closeOnClick: false })
         .setLngLat(currentFeature.geometry.coordinates)
-        .setHTML('<h3>Sweetgreen</h3>' +
-          '<h4>' + currentFeature.properties.address + '</h4>')
+        .setHTML('<h3>Museum</h3>' +
+          '<h4>' + currentFeature.properties.prop.opening_ho + '<br>' + "Users: " + currentFeature.properties.prop.n_users + '</h4>')
         .addTo(map);
     }
 
@@ -360,19 +360,19 @@
      // Add an event listener for when a user clicks on the map
       map.on('click', function(e) {
         // Query all the rendered points in the view
-        var features = map.queryRenderedFeatures(e.point, { layers: ['locations'] });
+        var features = map.queryRenderedFeatures(e.point, { layers: ['museums'] });
         if (features.length) {
           var clickedPoint = features[0];
           // 1. Fly to the point
           flyToStore(clickedPoint);
-          // 2. Close all other popups and display popup for clicked store
+          // 2. Close all other popups and display popup for clicked museum
           createPopUp(clickedPoint);
           // 3. Highlight listing in sidebar (and remove highlight for all other listings)
           var activeItem = document.getElementsByClassName('active');
           if (activeItem[0]) {
             activeItem[0].classList.remove('active');
           }
-          // Find the index of the store.features that corresponds to the clickedPoint that fired the event listener
+          // Find the index of the museums.features that corresponds to the clickedPoint that fired the event listener
           var selectedFeature = clickedPoint.properties.address;
 
           for (var i = 0; i < stores.features.length; i++) {
