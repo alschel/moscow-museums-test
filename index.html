@@ -160,6 +160,7 @@
       display: block;
       padding: 10px;
       font-weight: 400;
+      color: #5a7063;
     }
 
     .mapboxgl-popup-content div {
@@ -296,11 +297,10 @@
 
       var popup = new mapboxgl.Popup({ closeOnClick: false })
         .setLngLat(currentFeature.geometry.coordinates)
-        .setHTML('<h3>Museum</h3>' +
+        .setHTML('<h3>' + currentFeature.properties.name + '</h3>' +
           '<h4>' + currentFeature.properties.opening_ho + '<br>' + "Users: " + currentFeature.properties.n_users + '</h4>')
         .addTo(map);
     }
-
 
 
 
@@ -377,7 +377,9 @@
           flyToStore(clickedPoint);
           // 2. Close all other popups and display popup for clicked museum
           createPopUp(clickedPoint);
-          // 3. Highlight listing in sidebar (and remove highlight for all other listings)
+
+          // 3. Highlight listing in sidebar
+          // 3.1 Remove highlight for all other listings
           var activeItem = document.getElementsByClassName('active');
           if (activeItem[0]) {
             activeItem[0].classList.remove('active');
