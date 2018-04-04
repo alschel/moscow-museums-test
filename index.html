@@ -129,6 +129,55 @@
       visibility: hidden;
     }
 
+    /* Marker tweaks */
+    .mapboxgl-popup-close-button {
+      display: none;
+    }
+
+    .mapboxgl-popup-content {
+      font: 400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
+      padding: 0;
+      width: 180px;
+    }
+
+    .mapboxgl-popup-content-wrapper {
+      padding: 1%;
+    }
+
+    .mapboxgl-popup-content h3 {
+      background: #91c949;
+      color: #fff;
+      margin: 0;
+      display: block;
+      padding: 10px;
+      border-radius: 3px 3px 0 0;
+      font-weight: 700;
+      margin-top: -15px;
+    }
+
+    .mapboxgl-popup-content h4 {
+      margin: 0;
+      display: block;
+      padding: 10px;
+      font-weight: 400;
+    }
+
+    .mapboxgl-popup-content div {
+      padding: 10px;
+    }
+
+    .mapboxgl-container .leaflet-marker-icon {
+      cursor: pointer;
+    }
+
+    .mapboxgl-popup-anchor-top > .mapboxgl-popup-content {
+      margin-top: 15px;
+    }
+
+    .mapboxgl-popup-anchor-top > .mapboxgl-popup-tip {
+      border-bottom-color: #91c949;
+    }
+
         </style>
   </head>
   <body>
@@ -140,14 +189,22 @@
       <div id='listings' class='listings'></div>
     </div>
     <script>
+    // This will let you use the .remove() function later on
+    if (!('remove' in Element.prototype)) {
+      Element.prototype.remove = function() {
+        if (this.parentNode) {
+            this.parentNode.removeChild(this);
+        }
+      };
+    }
+
     mapboxgl.accessToken = 'pk.eyJ1IjoiYWxzY2hlbCIsImEiOiI0MGQxMGFmY2ViZTBhMjk5NDA1YTg2NzIxZjQyZWE2ZSJ9.LiQjz2oMBtEEPbhjGV-ogw';
 
     // Read the data from our geojson
     var museums = (function () {
       var museums;
         $.ajax({
-          // Чтобы данные успели подгрузиться до, делаем запрос асинхронным
-            'async': false,
+            'async': false, // Чтобы данные успели подгрузиться до загрузки карты, делаем запрос асинхронным
             'global': false,
             'url': 'data/moscow_museums.geojson',
             'dataType': "json",
@@ -169,8 +226,9 @@
         pitch: 30,
     });
 
+    // Прежде чем добавить слой с объектами, определим несколько вспомогательных функций
 
-    // Build a function to iterate through the locations and add each one to the sidebar listing
+    // 1. Build a function to iterate through the locations and add each one to the sidebar listing
     function buildLocationList(data) {
       // Iterate through the list of stores
       for (i = 0; i < data.features.length; i++) {
@@ -200,11 +258,54 @@
           details.innerHTML += prop.opening_ho;
         }
         if (prop.n_users) {
-          details.innerHTML += prop.n_users;
+          details.innerHTML += '<br>' + prop.n_users;
         }
+
+        // Add an event listener for the links in the sidebar listing
+        link.addEventListener('click', function(e) {
+          // Update the currentFeature to the store associated with the clicked link
+          var clickedListing = data.features[this.dataPosition];
+          // 1. Fly to the point associated with the clicked link
+          flyToStore(clickedListing);
+          // 2. Close all other popups and display popup for clicked store
+          createPopUp(clickedListing);
+          // 3. Highlight listing in sidebar (and remove highlight for all other listings)
+          var activeItem = document.getElementsByClassName('active');
+          if (activeItem[0]) {
+            activeItem[0].classList.remove('active');
+          }
+          this.parentNode.classList.add('active');
+        });
       }
     }
 
+    // 2. Build a function to fly to the object after click on object location on the map or on a listing item
+    function flyToStore(currentFeature) {
+      map.flyTo({
+        center: currentFeature.geometry.coordinates,
+        zoom: 15
+      });
+    }
+
+    // 2. Build a function to create popup after click on object location on the map or on a listing item
+    function createPopUp(currentFeature) {
+
+      // // Check if there is already a popup on the map and if so, remove it
+      var popUps = document.getElementsByClassName('mapboxgl-popup');
+      if (popUps[0]) popUps[0].remove();
+
+      var popup = new mapboxgl.Popup({ closeOnClick: false })
+        .setLngLat(currentFeature.geometry.coordinates)
+        .setHTML('<h3>Sweetgreen</h3>' +
+          '<h4>' + currentFeature.properties.address + '</h4>')
+        .addTo(map);
+    }
+
+
+
+
+    //==================================================================================
+    // Наконец, после загрузки карты добавляем слой и вызываем определенные выше функции
 
     // Add layer (below labels)
     map.on('load', function() {
@@ -255,6 +356,35 @@
        buildLocationList(museums);
 
      });
+
+     // Add an event listener for when a user clicks on the map
+      map.on('click', function(e) {
+        // Query all the rendered points in the view
+        var features = map.queryRenderedFeatures(e.point, { layers: ['locations'] });
+        if (features.length) {
+          var clickedPoint = features[0];
+          // 1. Fly to the point
+          flyToStore(clickedPoint);
+          // 2. Close all other popups and display popup for clicked store
+          createPopUp(clickedPoint);
+          // 3. Highlight listing in sidebar (and remove highlight for all other listings)
+          var activeItem = document.getElementsByClassName('active');
+          if (activeItem[0]) {
+            activeItem[0].classList.remove('active');
+          }
+          // Find the index of the store.features that corresponds to the clickedPoint that fired the event listener
+          var selectedFeature = clickedPoint.properties.address;
+
+          for (var i = 0; i < stores.features.length; i++) {
+            if (stores.features[i].properties.address === selectedFeature) {
+              selectedFeatureIndex = i;
+            }
+          }
+          // Select the correct list item using the found index and add the active class
+          var listing = document.getElementById('listing-' + selectedFeatureIndex);
+          listing.classList.add('active');
+        }
+      });
 
     </script>
   </body>
