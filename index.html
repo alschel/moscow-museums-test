@@ -199,9 +199,11 @@
         if (prop.opening_ho) {
           details.innerHTML += prop.opening_ho;
         }
+        if (prop.n_users) {
+          details.innerHTML += prop.n_users;
+        }
       }
     }
-
 
 
     // Add layer (below labels)
@@ -249,6 +251,7 @@
     // Insert the layer beneath the first symbol layer.
        }, firstSymbolId);
 
+       // Строим боковой список
        buildLocationList(museums);
 
      });
