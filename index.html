@@ -297,7 +297,7 @@
       var popup = new mapboxgl.Popup({ closeOnClick: false })
         .setLngLat(currentFeature.geometry.coordinates)
         .setHTML('<h3>Museum</h3>' +
-          '<h4>' + currentFeature.properties.prop.opening_ho + '<br>' + "Users: " + currentFeature.properties.prop.n_users + '</h4>')
+          '<h4>' + currentFeature.properties.opening_ho + '<br>' + "Users: " + currentFeature.properties.n_users + '</h4>')
         .addTo(map);
     }
 
